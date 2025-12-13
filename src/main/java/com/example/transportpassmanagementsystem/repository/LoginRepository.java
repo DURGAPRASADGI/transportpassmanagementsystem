@@ -11,6 +11,6 @@ public interface LoginRepository extends JpaRepository<Mcavv25Login,Integer> {
     @Query("""
             select new com.example.transportpassmanagementsystem.dto.LoginDTO(l.username,l.email,l.password)
            from Mcavv25Login l where l.username=:#{#loginDTO.username} and l.password=:#{#loginDTO.password}
-            """)
+           """)
     LoginDTO getLoginDetails(LoginDTO loginDTO);
 }

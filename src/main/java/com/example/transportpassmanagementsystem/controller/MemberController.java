@@ -1,12 +1,15 @@
 package com.example.transportpassmanagementsystem.controller;
 
+import com.example.transportpassmanagementsystem.dto.LoginDTO;
 import com.example.transportpassmanagementsystem.dto.MemberDTO;
+import com.example.transportpassmanagementsystem.dto.MemberTypeDTO;
 import com.example.transportpassmanagementsystem.dto.ResponseDTO;
 import com.example.transportpassmanagementsystem.service.MemberService;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -112,5 +115,37 @@ public class MemberController {
 
     }
 
+    @GetMapping("/all-members")
+    public  ResponseEntity<ResponseDTO<Object>> getAlMembers(
+            @Pattern(regexp = "^[a-zA-Z]{0,10}$",message = "Member Type should contain only letters")
+            @Size(max = 10,message = "Member Type should not exceed 10 characters")
+            @RequestParam(name = "memberType",required = false,defaultValue = "") String memberType,
+            @Min(value = 0,message = "Page number must be zero or a positive integer")
+            @Max(value = Integer.MAX_VALUE,message = "Page number cannot exceed " + Integer.MAX_VALUE)
+            @PositiveOrZero(message = "Page number must be zero or a positive integer")
+            @RequestParam(name = "page",required = false,defaultValue = "0") int page
+
+    ){
+        try {
+
+            Page<MemberTypeDTO> membersPage=memberService.getAllMembers(memberType,page);
+            ResponseDTO<Object> response=ResponseDTO.builder()
+                    .statusCode(HttpStatus.OK.value())
+                    .success(true)
+                    .data(membersPage)
+                    .build();
+            return ResponseEntity.ok(response);
+
+
+        } catch (Exception e) {
+            log.error("Error occurred while fetching members: {}", e.getMessage());
+            ResponseDTO<Object> errorResponse=ResponseDTO.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .success(false)
+                    .message("An unexpected error occurred")
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 
 }

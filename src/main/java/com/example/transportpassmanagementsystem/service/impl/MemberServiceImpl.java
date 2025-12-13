@@ -2,6 +2,7 @@ package com.example.transportpassmanagementsystem.service.impl;
 
 import com.example.transportpassmanagementsystem.dto.LoginDTO;
 import com.example.transportpassmanagementsystem.dto.MemberDTO;
+import com.example.transportpassmanagementsystem.dto.MemberTypeDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25Member;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import com.example.transportpassmanagementsystem.exception.TransportException;
@@ -14,12 +15,15 @@ import com.example.transportpassmanagementsystem.util.FieldValidation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -113,5 +117,38 @@ public class MemberServiceImpl  implements MemberService {
        return  error;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MemberTypeDTO> getAllMembers(String memberType, int page) {
+        int size=5;
+        int offset=page * size;
+        Pageable pageable= PageRequest.of(page,size);
+        List<Map<String,Object>> loginDTOS=mcavv25MemberTypeRepository.getMemberTypeDetails(memberType,offset,size);
+        List<MemberTypeDTO> memberTypeDTOList=memberTypeDTOS(loginDTOS);
+        long totalElements=mcavv25MemberTypeRepository.memeberTypeCount(memberType);
+
+        return new PageImpl<>(memberTypeDTOList,pageable,totalElements);
+    }
+
+    private  List<MemberTypeDTO> memberTypeDTOS(  List<Map<String,Object>> loginDTOS){
+        if(loginDTOS.isEmpty()) return Collections.emptyList();
+        return loginDTOS.stream().map(r->MemberTypeDTO.builder()
+                .memberTypeId(r.get("memberTypeId")!=null? (Integer) r.get("memberTypeId"):0)
+                .memberTypeName(r.get("memberTypeName")!=null ?(String) r.get("memberTypeName") :"")
+        .build()).toList();
+    }
+
+   private  List<MemberTypeDTO> memberTypeDTOList (List<Object[]> loginDTOS){
+        if(loginDTOS.isEmpty()) return  Collections.emptyList();
+        return loginDTOS.stream()
+                .map(obj-> MemberTypeDTO.builder()
+                                .memberTypeId(obj[0]!=null? (Integer) obj[0]:0)
+                                .memberTypeName(obj[1] !=null ? (String) obj[1] :"")
+                                .build()
+
+                        ).toList();
+
+
+   }
 
 }
