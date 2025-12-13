@@ -1,0 +1,34 @@
+package com.example.transportpassmanagementsystem.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "MCAVV25_login")
+@ToString
+public class Mcavv25Login {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "CAVV25_Login_Id", nullable = false)
+    private int loginId;
+    @Column(name  ="CAVV25_Username", nullable = false)
+    private String username;
+    @Column(name="CAVV25_Email", nullable = false)
+    private String email;
+    @Column(name="CAVV25_Password", nullable = false)
+    private String password;
+
+    @OneToOne(mappedBy = "userId")
+    @ToString.Exclude
+    private Mcavv25Member mcavv25Member;
+}
