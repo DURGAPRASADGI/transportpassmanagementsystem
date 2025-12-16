@@ -22,7 +22,7 @@ public class LoginDTO {
     private String email;
 
 
-    @Pattern(regexp = "^[a-zA-Z0-9@&*#$%()\\[\\]{}!|<>?^~`+=\\-]{8,20}$", message = "Password contains invalid characters")
+    @Pattern(regexp = "^[a-zA-Z0-9 @&*#$%()\\[\\]{}!|<>?^~`+=\\-]{8,20}$", message = "Password contains invalid characters")
     @Size(min = 8, max = 20, message = "Password should be between 8 and 20 characters")
     private String password;
 }
