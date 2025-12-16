@@ -9,6 +9,6 @@ public interface LoginService {
 
     List<String> validateLoginDTO(LoginDTO loginDTO);
 
-      List<String> existigUser(LoginDTO loginDTO, List<String> errors);
+    List<String> existigUser(LoginDTO loginDTO, List<String> errors);
 }
 

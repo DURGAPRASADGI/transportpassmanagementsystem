@@ -9,6 +9,7 @@ import com.example.transportpassmanagementsystem.service.LoginService;
 import com.example.transportpassmanagementsystem.util.FieldValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class LoginServiceImpl implements LoginService {
     private final LoginRepository loginRepository;
     private final FieldValidation fieldValidation;
+    private final ObjectProvider<LoginService> loginServiceProvider;
     @Override
     @Transactional
     public Boolean createLogin(LoginDTO loginDTO) {
@@ -38,6 +40,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> validateLoginDTO(LoginDTO loginDTO) {
         List<String> errors=new ArrayList<>();
         fieldValidation.requiredField(loginDTO.getUsername(),"Username",errors);
@@ -46,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
         if(!errors.isEmpty()){
             return errors;
         }
-        existigUser( loginDTO, errors);
+        loginServiceProvider.getObject().existigUser( loginDTO, errors);
         return  errors;
 
     }

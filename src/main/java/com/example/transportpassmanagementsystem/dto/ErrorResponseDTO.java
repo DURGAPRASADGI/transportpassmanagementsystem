@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ErrorResponseDTO {
     private  int statusCode;
-    private String message;
+    private Object message;
     private String path;
     private LocalDateTime timestamp;
 
