@@ -1,6 +1,7 @@
 package com.example.transportpassmanagementsystem.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,10 +22,13 @@ public class Mcavv25Login {
     @Id
     @Column(name = "CAVV25_Login_Id", nullable = false)
     private int loginId;
+    @Size(max = 20)
     @Column(name  ="CAVV25_Username", nullable = false)
     private String username;
+    @Size(max = 30)
     @Column(name="CAVV25_Email", nullable = false)
     private String email;
+    @Size(min = 8,max = 20)
     @Column(name="CAVV25_Password", nullable = false)
     private String password;
 

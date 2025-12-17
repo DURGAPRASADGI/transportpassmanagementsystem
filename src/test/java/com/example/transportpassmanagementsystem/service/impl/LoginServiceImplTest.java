@@ -2,6 +2,7 @@ package com.example.transportpassmanagementsystem.service.impl;
 
 import com.example.transportpassmanagementsystem.dto.LoginDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25Login;
+import com.example.transportpassmanagementsystem.exception.TransportException;
 import com.example.transportpassmanagementsystem.mapper.LoginMapper;
 import com.example.transportpassmanagementsystem.repository.LoginRepository;
 import com.example.transportpassmanagementsystem.service.LoginService;
@@ -75,6 +76,29 @@ class LoginServiceImplTest {
             assertTrue(flag);
             verify(loginRepository, times(1)).save(mcavv25Login);
         }
+    }
+    @Test
+    @DisplayName("Test createLogin - Exception")
+
+    void createLogin_ShouldThrowException(){
+
+        when(loginRepository.save(any(Mcavv25Login.class))).thenThrow(new RuntimeException("DB error"));
+        TransportException transportException=   assertThrows(TransportException.class, () -> loginServiceImpl.createLogin(loginDTO));
+         assertEquals("Error occurred while creating login: ",transportException.getMessage());
+            verify(loginRepository,times(1)).save(any(Mcavv25Login.class));
+
+    }
+
+    @Test
+    @DisplayName("Test createLogin - Null")
+    void creteLogin_ShouldReturnNull(){
+
+        when(loginRepository.save(any(Mcavv25Login.class))).thenReturn(null);
+       boolean flag=  loginServiceImpl.createLogin(loginDTO);
+
+        assertFalse(flag);
+        verify(loginRepository,times(1)).save(any(Mcavv25Login.class));
+
     }
 
 }
