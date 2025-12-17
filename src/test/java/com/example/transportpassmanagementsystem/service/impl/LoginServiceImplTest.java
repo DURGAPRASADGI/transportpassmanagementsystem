@@ -21,6 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.beans.factory.ObjectProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,7 +82,6 @@ class LoginServiceImplTest {
     }
     @Test
     @DisplayName("Test createLogin - Exception")
-
     void createLogin_ShouldThrowException(){
 
         when(loginRepository.save(any(Mcavv25Login.class))).thenThrow(new RuntimeException("DB error"));
@@ -101,4 +103,43 @@ class LoginServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("Test existing - Null")
+    void valid_NewUser(){
+        when(loginRepository.getLoginDetails(any(LoginDTO.class))).thenReturn(null);
+        List<String> msg=loginServiceImpl.existigUser(loginDTO,new ArrayList<>());
+        assertEquals(0,msg.size());
+        verify(loginRepository,times(1)).getLoginDetails(loginDTO);
+
+    }
+
+    @Test
+    @DisplayName("Test existing - Not null")
+    void exising_User(){
+        when(loginRepository.getLoginDetails(any(LoginDTO.class))).thenReturn(loginDTO);
+
+        List<String> errorMsg=loginServiceImpl.existigUser(loginDTO,new ArrayList<>());
+
+        assertEquals(1,errorMsg.size());
+        verify(loginRepository,times(1)).getLoginDetails(loginDTO);
+
+
+    }
+
+    @Test
+    @DisplayName("Test existing with Exception")
+    void existing_withException(){
+
+        when(loginRepository.getLoginDetails(loginDTO)).thenThrow(new RuntimeException("DB error"));
+        List<String> error=new ArrayList<>();
+
+        TransportException transportException=assertThrows(TransportException.class,() -> loginServiceImpl.existigUser(loginDTO,error));
+
+        assertEquals("Error occurred while validating existing user: ",transportException.getMessage());
+
+        verify(loginRepository,times(1)).getLoginDetails(loginDTO);
+
+
+
+    }
 }
