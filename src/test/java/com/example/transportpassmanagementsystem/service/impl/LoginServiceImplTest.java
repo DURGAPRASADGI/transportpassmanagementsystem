@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import org.mockito.MockedStatic;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -35,7 +36,7 @@ class LoginServiceImplTest {
     @Mock
     LoginRepository loginRepository;
 
-    @Mock
+    @Spy
     FieldValidation fieldValidation;
 
     @Mock
@@ -139,7 +140,27 @@ class LoginServiceImplTest {
 
         verify(loginRepository,times(1)).getLoginDetails(loginDTO);
 
+    }
 
+    @Test
+    @DisplayName("Test Filed Validation - Success")
+    void validate_Field(){
+       when(loginServiceObjectProvider.getObject()).thenReturn(loginServiceImpl);
+       when(loginRepository.getLoginDetails(loginDTO)).thenReturn(null);
+        List<String> errorMsg=loginServiceImpl.validateLoginDTO(loginDTO);
+        assertEquals(0,errorMsg.size());
+        verify(loginRepository,times(1)).getLoginDetails(any(LoginDTO.class));
+
+    }
+    @Test
+    @DisplayName("Test Filed validation - username error ")
+    void validate_FieldError(){
+        loginDTO.setUsername(null);
+        List<String> msg = loginServiceImpl.validateLoginDTO(loginDTO);
+
+        // Assert
+        assertNotNull(msg);
+        assertEquals(1, msg.size());
 
     }
 }
