@@ -42,9 +42,9 @@ class LoginServiceImplTest {
     @Mock
     ObjectProvider<LoginService> loginServiceObjectProvider;
 
-    LoginDTO loginDTO = new LoginDTO();
+    LoginDTO loginDTO;
 
-    Mcavv25Login mcavv25Login = new Mcavv25Login();
+    Mcavv25Login mcavv25Login;
 
     @BeforeEach
      void setup(){
