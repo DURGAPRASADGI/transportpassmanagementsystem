@@ -34,7 +34,7 @@ public class MemberServiceImpl  implements MemberService {
     private final MCAVV25MemberRepository mcavv25MemberRepository;
     private  final FieldValidation fieldValidation;
     private final LoginService loginService;
-    private ObjectProvider<MemberService> memberServices;
+    private final ObjectProvider<MemberService> memberServicesProvider;
 
     @Override
     @Transactional(readOnly = true)
@@ -95,7 +95,7 @@ public class MemberServiceImpl  implements MemberService {
         loginDTO.setUsername( memberDTO.getUserName());
         loginDTO.setPassword(memberDTO.getPassword());
         loginService.validateLoginDTO(loginDTO);
-        MemberService selfMemberService=memberServices.getIfAvailable();
+        MemberService selfMemberService=memberServicesProvider.getIfAvailable();
         if(selfMemberService!=null){
             selfMemberService.getMobileDetails(memberDTO.getMobileNumber(),error);
             selfMemberService.validateMember(memberDTO.getMemberType(),error);
