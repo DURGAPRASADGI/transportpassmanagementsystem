@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,11 @@ public class LoginServiceImpl implements LoginService {
         if(!errors.isEmpty()){
             return errors;
         }
-        loginServiceProvider.getIfAvailable().existigUser( loginDTO, errors);
+
+        LoginService loginService = loginServiceProvider.getIfAvailable();
+        if(loginService!=null){
+            loginService .existigUser( loginDTO, errors);
+        }
         return  errors;
 
     }

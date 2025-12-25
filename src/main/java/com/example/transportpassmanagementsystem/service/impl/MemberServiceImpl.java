@@ -15,6 +15,7 @@ import com.example.transportpassmanagementsystem.util.FieldValidation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,7 @@ public class MemberServiceImpl  implements MemberService {
     private final MCAVV25MemberRepository mcavv25MemberRepository;
     private  final FieldValidation fieldValidation;
     private final LoginService loginService;
+    private ObjectProvider<MemberService> memberServices;
 
     @Override
     @Transactional(readOnly = true)
@@ -93,8 +95,13 @@ public class MemberServiceImpl  implements MemberService {
         loginDTO.setUsername( memberDTO.getUserName());
         loginDTO.setPassword(memberDTO.getPassword());
         loginService.validateLoginDTO(loginDTO);
-         getMobileDetails(memberDTO.getMobileNumber(),error);
-        validateMember(memberDTO.getMemberType(),error);
+        MemberService selfMemberService=memberServices.getIfAvailable();
+        if(selfMemberService!=null){
+            selfMemberService.getMobileDetails(memberDTO.getMobileNumber(),error);
+            selfMemberService.validateMember(memberDTO.getMemberType(),error);
+
+        }
+
         return error;
     }
 
@@ -107,6 +114,7 @@ public class MemberServiceImpl  implements MemberService {
         return member!=null;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<String>  getMobileDetails(String mobile,List<String> error){
         boolean flag=mcavv25MemberRepository.mobileNumberFound(mobile);
@@ -138,17 +146,5 @@ public class MemberServiceImpl  implements MemberService {
         .build()).toList();
     }
 
-   private  List<MemberTypeDTO> memberTypeDTOList (List<Object[]> loginDTOS){
-        if(loginDTOS.isEmpty()) return  Collections.emptyList();
-        return loginDTOS.stream()
-                .map(obj-> MemberTypeDTO.builder()
-                                .memberTypeId(obj[0]!=null? (Integer) obj[0]:0)
-                                .memberTypeName(obj[1] !=null ? (String) obj[1] :"")
-                                .build()
-
-                        ).toList();
-
-
-   }
 
 }
