@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
         if(!errors.isEmpty()){
             return errors;
         }
-        loginServiceProvider.getObject().existigUser( loginDTO, errors);
+        loginServiceProvider.getIfAvailable().existigUser( loginDTO, errors);
         return  errors;
 
     }

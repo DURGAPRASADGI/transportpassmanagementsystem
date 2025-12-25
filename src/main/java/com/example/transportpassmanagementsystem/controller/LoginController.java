@@ -31,11 +31,11 @@ public class LoginController {
             List<String> validationErrors=loginService.validateLoginDTO(loginDTO);
             if(!validationErrors.isEmpty()){
                 ResponseDTO<Object> errorResponse=ResponseDTO.builder()
-                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value())
                         .success(false)
                         .data(validationErrors)
                         .build();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(errorResponse);
             }
 
             boolean flag=loginService.createLogin(loginDTO);
@@ -48,11 +48,11 @@ public class LoginController {
                 return ResponseEntity.ok(response);
             }else{
                 ResponseDTO<Object> errorResponse=ResponseDTO.builder()
-                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value())
                         .success(false)
                         .message("Failed to create login")
                         .build();
-                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                return  ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(errorResponse);
 
             }
         } catch (Exception e) {
