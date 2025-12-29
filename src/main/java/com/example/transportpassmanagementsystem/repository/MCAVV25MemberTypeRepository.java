@@ -1,5 +1,6 @@
 package com.example.transportpassmanagementsystem.repository;
 
+import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +39,5 @@ public interface MCAVV25MemberTypeRepository extends JpaRepository<Mcavv25Member
 	select * from mcavv25_member_type where cavv25_member_type_name ILike :memberType
 	""",nativeQuery = true)
     Optional<Mcavv25MemberType> getMemberType(@Param("memberType") String memberType);
-
 
 }

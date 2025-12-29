@@ -1,11 +1,14 @@
 package com.example.transportpassmanagementsystem.controller;
 
 import com.example.transportpassmanagementsystem.dto.PackageDTO;
+import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
+import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.dto.ResponseDTO;
 import com.example.transportpassmanagementsystem.service.PackageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +55,26 @@ public class PackageController {
         }
 
     }
+
+    @PostMapping(value = "/getRecords",produces = MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<Object> getRecords(@Valid @RequestBody PackageInputRecordsDTO packageInputRecordsDTO){
+        try {
+            Page<PackageRecordsDTO> packageGetRecordsDTOS=packageService.getRecords(packageInputRecordsDTO);
+            ResponseDTO<Object> responseDTO=ResponseDTO.builder()
+                    .statusCode(HttpStatus.OK.value())
+                    .success(true)
+                    .data(packageGetRecordsDTOS)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            ResponseDTO<Object> responseDTO=ResponseDTO.builder()
+                    .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .success(false)
+                    .message("Error occurs "+e.getMessage())
+                    .build();
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDTO);
+        }
+    }
+
 
 }

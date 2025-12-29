@@ -1,6 +1,8 @@
 package com.example.transportpassmanagementsystem.service.impl;
 
 import com.example.transportpassmanagementsystem.dto.PackageDTO;
+import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
+import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberTypePackage;
 import com.example.transportpassmanagementsystem.entity.Mcavv25Package;
@@ -9,10 +11,15 @@ import com.example.transportpassmanagementsystem.repository.Mcavv25PackageReposi
 import com.example.transportpassmanagementsystem.service.PackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -58,4 +65,33 @@ public class PackageServiceImpl implements PackageService {
 
         }
     }
+
+    @Override
+    public Page<PackageRecordsDTO> getRecords(PackageInputRecordsDTO packageInputRecordsDTO) {
+        int offset=packageInputRecordsDTO.getPageNo()*packageInputRecordsDTO.getSize();
+        Pageable pageable= PageRequest.of(packageInputRecordsDTO.getPageNo(),packageInputRecordsDTO.getSize());
+        List<Map<String,Object>> maps=mcavv25PackageRepository.getRecords(packageInputRecordsDTO,offset);
+        List<PackageRecordsDTO> data=packageRecordsDTOS(maps);
+
+        long totalRecords=mcavv25PackageRepository.count(packageInputRecordsDTO);
+
+        return new PageImpl<>(data,pageable,totalRecords);
+
+    }
+
+    private List<PackageRecordsDTO> packageRecordsDTOS(List<Map<String, Object>> maps) {
+
+        return maps.stream()
+                .map(packageRecord -> PackageRecordsDTO.builder()
+                        .packageName(String.valueOf(packageRecord.getOrDefault("package_name", "")))
+                        .transport(String.valueOf(packageRecord.getOrDefault("transport", "")))
+                        .memberType(String.valueOf(packageRecord.getOrDefault("member_type", "")))
+                        .subscription(String.valueOf(packageRecord.getOrDefault("subscription", "")))
+                        .validity(packageRecord.get("validity") != null ? (Integer) packageRecord.get("validity") : 0)
+                        .price(packageRecord.get("price") != null ? (Integer) packageRecord.get("price") : 0)
+                        .build()
+                )
+                .toList();
+    }
+
 }
