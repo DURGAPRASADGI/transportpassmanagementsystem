@@ -3,10 +3,12 @@ package com.example.transportpassmanagementsystem.repository;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface MCAVV25MemberTypeRepository extends JpaRepository<Mcavv25MemberType, Integer> {
@@ -31,6 +33,11 @@ public interface MCAVV25MemberTypeRepository extends JpaRepository<Mcavv25Member
             "WHERE CAVV25_Member_Type_Name LIKE CONCAT('%', :memberType, '%')",
             nativeQuery = true)
     long memeberTypeCount(String memberType);
+
+    @Query(value = """
+	select * from mcavv25_member_type where cavv25_member_type_name ILike :memberType
+	""",nativeQuery = true)
+    Optional<Mcavv25MemberType> getMemberType(@Param("memberType") String memberType);
 
 
 }

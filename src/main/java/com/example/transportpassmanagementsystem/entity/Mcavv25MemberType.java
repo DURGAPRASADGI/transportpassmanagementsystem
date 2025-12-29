@@ -26,12 +26,12 @@ public class Mcavv25MemberType {
     @ToString.Exclude
     private Mcavv25Member mcavv25Member;
 
-    @OneToMany(mappedBy = "mcavv25MemberType")
+    @OneToMany(mappedBy = "mcavv25MemberType",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25MemberTypeProof> mcavv25MemberTypeProof = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "mcavv25MemberType")
+    @OneToMany(mappedBy = "mcavv25MemberType",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25MemberTypePackage> mcavv25MemberTypePackages=new ArrayList<>();
 

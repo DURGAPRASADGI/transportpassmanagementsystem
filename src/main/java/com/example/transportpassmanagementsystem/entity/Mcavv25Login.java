@@ -32,7 +32,7 @@ public class Mcavv25Login {
     @Column(name="CAVV25_Password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "userId")
+    @OneToOne(mappedBy = "userId",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private Mcavv25Member mcavv25Member;
 }

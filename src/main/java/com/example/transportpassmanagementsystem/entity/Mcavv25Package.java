@@ -34,11 +34,11 @@ public class Mcavv25Package {
     @Column(name = "CAVV25_Price", nullable = false)
     private int price;
 
-    @OneToMany(mappedBy = "mcavv25Package")
+    @OneToMany(mappedBy = "mcavv25Package",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25MemberTypePackage> mcavv25MemberTypePackages=new ArrayList<>();
 
-    @OneToMany(mappedBy = "mcavv25Package")
+    @OneToMany(mappedBy = "mcavv25Package",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private  List<Mcavv25EnrolledPackage> mcavv25EnrolledPackages=new ArrayList<>();
 

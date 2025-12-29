@@ -28,19 +28,19 @@ public class Mcavv25Station {
     @Column(name = "CAVV25_Latitude", nullable = false, precision = 10, scale = 6)
     private BigDecimal longitude;
 
-    @OneToMany(mappedBy = "fromStation")
+    @OneToMany(mappedBy = "fromStation",cascade =  CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25TransportCost> mcavv25FromTransportCosts=new ArrayList<>();
 
-    @OneToMany(mappedBy = "toStation")
+    @OneToMany(mappedBy = "toStation",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25TransportCost> mcavv25ToStationCostsTransportCosts=new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromStation")
+    @OneToMany(mappedBy = "fromStation",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25TransportHistory> mcavv255FromTransportHistories=new ArrayList<>();
 
-    @OneToMany(mappedBy = "toStation")
+    @OneToMany(mappedBy = "toStation",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25TransportHistory> mcavv25ToTransportHistories= new ArrayList<>();
 

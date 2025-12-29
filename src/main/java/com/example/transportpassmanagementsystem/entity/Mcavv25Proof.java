@@ -26,11 +26,11 @@ public class Mcavv25Proof {
     @Column(name = "CAVV25_Proof_Name",nullable = false)
     private String proofName;
 
-    @OneToMany(mappedBy = "proofId")
+    @OneToMany(mappedBy = "proofId",cascade = CascadeType.ALL,orphanRemoval = true)
     @ToString.Exclude
     private List<Mcavv25MemberTypeProof> mcavv25MemberTypeProof=new ArrayList<>();
 
-    @OneToMany(mappedBy = "mcavv25Proof")
+    @OneToMany(mappedBy = "mcavv25Proof",cascade = CascadeType.ALL,orphanRemoval=true)
     @ToString.Exclude
     private  List<Mcavv25MemberProof> questionMemberProof=new ArrayList<>();
 

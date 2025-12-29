@@ -21,8 +21,8 @@ public class PackageDTO {
     @Pattern(regexp = "^[A-Za-z]{0,20}",message = "transportMode must be 20 characters only")
     @Size(max = 20,message = "transportMode must be 20 characters only")
     private String transportMode;
-    @Pattern(regexp="^[A-Za-z]{0,10}",message = "subscriptionType must be 20 characters only")
-    @Size(max = 10,message = "subscriptionType must be 20 characters only")
+    @Pattern(regexp="^[A-Za-z]{0,10}",message = "subscriptionType must be 10 characters only")
+    @Size(max = 10,message = "subscriptionType must be 10 characters only")
     private String subscriptionType;
     @Max(value = 366,message = "validity must be enter less than 366 only")
     private int validity;
