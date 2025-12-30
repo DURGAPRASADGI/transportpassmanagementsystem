@@ -9,7 +9,9 @@ import com.example.transportpassmanagementsystem.entity.Mcavv25Package;
 import com.example.transportpassmanagementsystem.exception.TransportException;
 import com.example.transportpassmanagementsystem.repository.MCAVV25MemberTypeRepository;
 import com.example.transportpassmanagementsystem.repository.Mcavv25PackageRepository;
+import com.example.transportpassmanagementsystem.service.MemberService;
 import com.example.transportpassmanagementsystem.service.PackageService;
+import com.example.transportpassmanagementsystem.util.FieldValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +32,9 @@ import java.util.Optional;
 public class PackageServiceImpl implements PackageService {
     private final Mcavv25PackageRepository mcavv25PackageRepository;
     private final MCAVV25MemberTypeRepository mcavv25MemberTypeRepository;
+    private final FieldValidation fieldValidation;
+    private final MemberService memberService;
+
 
 
     @Transactional
@@ -84,6 +90,25 @@ public class PackageServiceImpl implements PackageService {
 
     }
 
+    @Override
+    public List<String> validate(PackageDTO packageDTO) {
+        List<String> error=new ArrayList<>();
+        fieldValidation.requiredField(packageDTO.getName(),"packageName",error);
+        fieldValidation.requiredField(packageDTO.getTransportMode(),"transport",error);
+        fieldValidation.requiredField(packageDTO.getSubscriptionType(),"subscription",error);
+        packageDTO.getMemberTypePackageDTOS()
+                .forEach(memberTypePackageDTO->fieldValidation.requiredField(memberTypePackageDTO.getMemberTypeName(),"MemberType",error));
+
+        if(!error.isEmpty()){
+            return  error;
+        }
+
+        packageDTO.getMemberTypePackageDTOS()
+                        .forEach(memberTypePackage->memberService.validateMember(memberTypePackage.getMemberTypeName(),error));
+
+        return error;
+    }
+
     private List<PackageRecordsDTO> packageRecordsDTOS(List<Map<String, Object>> maps) {
 
         return maps.stream()
@@ -98,5 +123,6 @@ public class PackageServiceImpl implements PackageService {
                 )
                 .toList();
     }
+
 
 }

@@ -5,6 +5,7 @@ import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
 import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.dto.ResponseDTO;
 import com.example.transportpassmanagementsystem.service.PackageService;
+import com.example.transportpassmanagementsystem.util.FieldValidation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/package")
@@ -27,6 +30,17 @@ public class PackageController {
     @PostMapping(value = "/create",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<Object>> createPackage(@Valid @RequestBody PackageDTO packageDTO){
         try {
+
+            List<String> validationError=packageService.validate(packageDTO);
+            if(!validationError.isEmpty()){
+                ResponseDTO<Object> responseDTO=ResponseDTO.builder()
+                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .success(false)
+                        .data(validationError)
+                        .build();
+                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
+
+            }
 
             boolean flag =packageService.createPackage(packageDTO);
             if(flag){

@@ -44,8 +44,7 @@ public class MemberServiceImpl  implements MemberService {
                 errors.add("Member type is required");
                 return errors;
             }
-            boolean flag=mcavv25MemberTypeRepository.getMemberTypes().stream()
-                    .anyMatch(s->s.equalsIgnoreCase(memberType));
+            boolean flag=mcavv25MemberTypeRepository.getMemberTypes(memberType);
             if(flag){
                 errors.add("Member type already exists");
             }

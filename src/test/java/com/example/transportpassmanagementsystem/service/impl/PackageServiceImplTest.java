@@ -10,12 +10,15 @@ import com.example.transportpassmanagementsystem.entity.Mcavv25Package;
 import com.example.transportpassmanagementsystem.exception.TransportException;
 import com.example.transportpassmanagementsystem.repository.MCAVV25MemberTypeRepository;
 import com.example.transportpassmanagementsystem.repository.Mcavv25PackageRepository;
+import com.example.transportpassmanagementsystem.service.MemberService;
+import com.example.transportpassmanagementsystem.util.FieldValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
@@ -38,6 +41,9 @@ class PackageServiceImplTest {
     @Mock
     private MCAVV25MemberTypeRepository mcavv25MemberTypeRepository;
 
+@Spy
+    private MemberService memberService;
+
     private  PackageDTO packageDTO;
 
     private Mcavv25Package mcavv25Package;
@@ -49,6 +55,9 @@ class PackageServiceImplTest {
     private Mcavv25MemberType mcavv25MemberType;
 
     private PackageInputRecordsDTO packageInputRecordsDTO;
+
+    @Spy
+    private FieldValidation fieldValidation;
 
     @BeforeEach
     void setUp(){
@@ -85,7 +94,6 @@ mcavv25Package=Mcavv25Package.builder()
         .validity(30)
         .price(100)
         .mcavv25MemberTypePackages(List.of(mcavv25MemberTypePackage))
-        .mcavv25EnrolledPackages(null)
         .build();
 
         packageInputRecordsDTO =PackageInputRecordsDTO.builder()
@@ -108,6 +116,47 @@ mcavv25Package=Mcavv25Package.builder()
         verify(mcavv25MemberTypeRepository,times(1)).save(any(Mcavv25MemberType.class));
 
     }
+
+    @Test
+    @DisplayName("Test create Member package - field Validation Error")
+    void fieldValidationError(){
+      packageDTO.setName("");
+        List<String> list=packageService.validate(packageDTO);
+        assertEquals(1,list.size());
+    }
+
+    @Test
+    @DisplayName("Test create Member package - member Type already exist Error")
+    void memberTypeAlready_Exist() {
+
+        // Mock MEMBER SERVICE behavior (this is what validate() actually calls)
+        doAnswer(invocation -> {
+            List<String> errors = invocation.getArgument(1);
+            errors.add("Member type already exists");
+            return errors;
+        }).when(memberService).validateMember(eq("Kids"), anyList());
+
+        List<String> errors = packageService.validate(packageDTO);
+
+        assertEquals(1, errors.size());
+        assertEquals("Member type already exists", errors.get(0));
+
+        verify(memberService, times(1))
+                .validateMember(eq("Kids"), anyList());
+    }
+
+
+
+    @Test
+    @DisplayName("Test create Member package - member Type DBFailure")
+    void memberType_ShouldDBFailure() {
+        when(mcavv25MemberTypeRepository.getMemberTypes(anyString())).thenThrow(new RuntimeException("DB error"));
+        TransportException transportException = assertThrows(TransportException.class, () -> packageService.validate(packageDTO));
+        assertEquals("Error occurred while validating member type: ",transportException.getMessage());
+
+    }
+
+
 
     @Test
     @DisplayName("Test create package - sub Entity failed")

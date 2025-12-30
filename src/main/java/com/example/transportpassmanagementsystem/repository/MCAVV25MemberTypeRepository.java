@@ -1,6 +1,5 @@
 package com.example.transportpassmanagementsystem.repository;
 
-import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,9 +14,9 @@ import java.util.Optional;
 public interface MCAVV25MemberTypeRepository extends JpaRepository<Mcavv25MemberType, Integer> {
 
     @Query("""
-            select mmt.memberTypeName from Mcavv25MemberType mmt
+            select mmt.memberTypeName from Mcavv25MemberType mmt  where mmt.memberTypeName ILIKE concat(%,:memberTye,%)
             """)
-    List<String> getMemberTypes();
+    boolean getMemberTypes(String memberTye);
 
     @Query(value = "SELECT CAVV25_Member_Type_Id AS memberTypeId, " +
             "CAVV25_Member_Type_Name AS memberTypeName " +
