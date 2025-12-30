@@ -24,7 +24,8 @@ public interface Mcavv25PackageRepository extends JpaRepository<Mcavv25Package, 
                     ORDER BY A.cavv25_package_id
                     OFFSET :offset ROW FETCH NEXT  :#{#packageInputRecordsDTO.size} ROW only
                     """,nativeQuery = true)
-        List<Map<String,Object>> getRecords(@Param("packageInputRecordsDTO") PackageInputRecordsDTO packageInputRecordsDT0,@Param("offset") int offset);
+        List<Map<String,Object>> getRecords(@Param("packageInputRecordsDTO") PackageInputRecordsDTO packageInputRecordsDT0,
+                                            @Param("offset") int offset);
     @Query(value = """
                 select COUNT(*)
                     from mcavv25_package A
