@@ -7,6 +7,7 @@ import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberTypePackage;
 import com.example.transportpassmanagementsystem.entity.Mcavv25Package;
+import com.example.transportpassmanagementsystem.exception.TransportException;
 import com.example.transportpassmanagementsystem.repository.MCAVV25MemberTypeRepository;
 import com.example.transportpassmanagementsystem.repository.Mcavv25PackageRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -141,13 +142,42 @@ mcavv25Package=Mcavv25Package.builder()
         map.put("validity",20);
         map.put("price",100);
 
-        when(mcavv25PackageRepository.count(packageInputRecordsDTO)).thenReturn(eq(1L));
+        when(mcavv25PackageRepository.count(any(PackageInputRecordsDTO.class))).thenReturn(2L);
         when(mcavv25PackageRepository.getRecords(any(PackageInputRecordsDTO.class),eq(0)))
                 .thenReturn(List.of(map));
 
        Page<PackageRecordsDTO>  packageRecordsDTOS=packageService.getRecords(packageInputRecordsDTO);
        assertNotNull(packageRecordsDTOS.getContent());
-       verify(mcavv25PackageRepository,times(1)).getRecords(any(PackageInputRecordsDTO.class),any(Integer.class));
+       verify(mcavv25PackageRepository,times(1)).getRecords(any(PackageInputRecordsDTO.class),eq(0));
+        verify(mcavv25PackageRepository,times(1)).count(any(PackageInputRecordsDTO.class));
+
+    }
+
+    @Test
+    @DisplayName("Tes get Page of records - Failed list of records")
+    void  getRecords_shouldFailedListOfRecords(){
+
+when(mcavv25PackageRepository.getRecords(any(PackageInputRecordsDTO.class),eq(0))).thenThrow(new RuntimeException("DB error"));
+        TransportException transportException=assertThrows(TransportException.class,()->packageService.getRecords(packageInputRecordsDTO));
+        assertEquals("Error occurs ",transportException.getMessage());
+   verify(mcavv25PackageRepository,times(1)).getRecords(any(PackageInputRecordsDTO.class),eq(0));
+    }
+
+    @Test
+    @DisplayName("Test get page of records - Failed total count")
+    void getRecords_ShouldFailedTotalCount(){
+        Map<String,Object> map=new HashMap<>();
+        map.put("package_name","Quarterly");
+        map.put("transport","metro");
+        map.put("member_type","Kids");
+        map.put("subscription","Monthly");
+        map.put("validity",20);
+        map.put("price",100);
+        when(mcavv25PackageRepository.count(any(PackageInputRecordsDTO.class))).thenThrow(new RuntimeException("DB error"));
+        when(mcavv25PackageRepository.getRecords(any(PackageInputRecordsDTO.class),eq(0))).thenReturn(List.of(map));
+        TransportException transportException=assertThrows(TransportException.class,()->packageService.getRecords(packageInputRecordsDTO));
+        assertEquals("Error occurs ",transportException.getMessage());
+        verify(mcavv25PackageRepository,times(1)).getRecords(any(PackageInputRecordsDTO.class),eq(0));
         verify(mcavv25PackageRepository,times(1)).count(any(PackageInputRecordsDTO.class));
 
     }
