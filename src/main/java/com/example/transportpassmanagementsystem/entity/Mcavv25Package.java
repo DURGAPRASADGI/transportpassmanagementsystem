@@ -11,6 +11,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "MCAVV25_Package")
 public class Mcavv25Package {

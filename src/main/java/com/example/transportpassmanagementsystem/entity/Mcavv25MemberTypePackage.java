@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Getter
+@Builder
 @Setter
 @ToString
 @Table(name = "MCAVV25_Member_Type_Package")

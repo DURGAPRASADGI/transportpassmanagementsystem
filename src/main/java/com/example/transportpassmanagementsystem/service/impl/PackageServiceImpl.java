@@ -6,6 +6,7 @@ import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberType;
 import com.example.transportpassmanagementsystem.entity.Mcavv25MemberTypePackage;
 import com.example.transportpassmanagementsystem.entity.Mcavv25Package;
+import com.example.transportpassmanagementsystem.exception.TransportException;
 import com.example.transportpassmanagementsystem.repository.MCAVV25MemberTypeRepository;
 import com.example.transportpassmanagementsystem.repository.Mcavv25PackageRepository;
 import com.example.transportpassmanagementsystem.service.PackageService;
@@ -68,14 +69,18 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public Page<PackageRecordsDTO> getRecords(PackageInputRecordsDTO packageInputRecordsDTO) {
-        int offset=packageInputRecordsDTO.getPageNo()*packageInputRecordsDTO.getSize();
-        Pageable pageable= PageRequest.of(packageInputRecordsDTO.getPageNo(),packageInputRecordsDTO.getSize());
-        List<Map<String,Object>> maps=mcavv25PackageRepository.getRecords(packageInputRecordsDTO,offset);
-        List<PackageRecordsDTO> data=packageRecordsDTOS(maps);
+        try{
+            int offset=packageInputRecordsDTO.getPageNo()*packageInputRecordsDTO.getSize();
+            Pageable pageable= PageRequest.of(packageInputRecordsDTO.getPageNo(),packageInputRecordsDTO.getSize());
+            List<Map<String,Object>> maps=mcavv25PackageRepository.getRecords(packageInputRecordsDTO,offset);
+            List<PackageRecordsDTO> data=packageRecordsDTOS(maps);
 
-        long totalRecords=mcavv25PackageRepository.count(packageInputRecordsDTO);
+            long totalRecords=mcavv25PackageRepository.count(packageInputRecordsDTO);
 
-        return new PageImpl<>(data,pageable,totalRecords);
+            return new PageImpl<>(data,pageable,totalRecords);
+        } catch (Exception e) {
+            throw  new TransportException("Error occurs ",e);
+        }
 
     }
 
