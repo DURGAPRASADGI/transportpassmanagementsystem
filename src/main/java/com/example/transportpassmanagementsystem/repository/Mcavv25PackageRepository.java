@@ -19,7 +19,7 @@ public interface Mcavv25PackageRepository extends JpaRepository<Mcavv25Package, 
                     from mcavv25_package A
                     left join mcavv25_member_type_package B ON A.cavv25_package_id=B.cavv25_package_id
                     left join mcavv25_member_type C ON B.cavv25_member_type_id=C.cavv25_member_type_id
-                    where  :#{#packageInputRecordsDTO.packageName} IS NULL OR :#{#packageInputRecordsDTO.packageName}=''
+                    where :#{#packageInputRecordsDTO.packageName} IS NULL OR :#{#packageInputRecordsDTO.packageName}=''
                     OR A.cavv25_package_name Ilike concat('%',:#{#packageInputRecordsDTO.packageName},'%')
                     ORDER BY A.cavv25_package_id
                     OFFSET :offset ROW FETCH NEXT  :#{#packageInputRecordsDTO.size} ROW only
