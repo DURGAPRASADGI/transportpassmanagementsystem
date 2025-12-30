@@ -87,8 +87,8 @@ public class PackageServiceImpl implements PackageService {
                         .transport(String.valueOf(packageRecord.getOrDefault("transport", "")))
                         .memberType(String.valueOf(packageRecord.getOrDefault("member_type", "")))
                         .subscription(String.valueOf(packageRecord.getOrDefault("subscription", "")))
-                        .validity(packageRecord.get("validity") != null ? (Integer) packageRecord.get("validity") : 0)
-                        .price(packageRecord.get("price") != null ? (Integer) packageRecord.get("price") : 0)
+                        .validity((Integer)packageRecord.getOrDefault("validity",0))
+                        .price((Integer) packageRecord.getOrDefault("price",0))
                         .build()
                 )
                 .toList();
