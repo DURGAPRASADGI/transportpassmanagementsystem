@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,8 +34,8 @@ class PackageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private PackageDTO packageDTO;
-    private MemberTypePackageDTO memberTypePackageDTO;
+     PackageDTO packageDTO;
+     MemberTypePackageDTO memberTypePackageDTO;
 
   @BeforeEach
     void setUp(){
@@ -67,6 +68,47 @@ class PackageControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Package Created Successfully"));
 
+
+    }
+    @Test
+    @DisplayName("Test create package should failed")
+    void  createPackageFailed() throws Exception {
+
+      when(packageService.createPackage(any(PackageDTO.class))).thenReturn(false);
+      mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/package/create")
+              .content(objectMapper.writeValueAsString(packageDTO))
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+      ).andExpect(status().isBadRequest())
+              .andExpect(jsonPath("$.message").value("create Package is failed"))
+              .andExpect(jsonPath("$.statusCode").value(HttpStatus.BAD_REQUEST.value()));
+
+    }
+
+    @Test
+    @DisplayName("Test create package should Internal Error")
+    void createDBFailure() throws Exception {
+      when(packageService.createPackage(any(PackageDTO.class))).thenThrow(new RuntimeException("DB error"));
+      mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/package/create")
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .content(objectMapper.writeValueAsString(packageDTO))
+
+      ).andExpect(status().isInternalServerError())
+              .andExpect(jsonPath("$.statusCode").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+              .andExpect(jsonPath("$.success").value(false))
+              .andExpect(jsonPath("$.message").value("Internal server Error DB error"));
+
+    }
+
+    @Test
+    @DisplayName("Test create package should validate Error")
+    void createPackageValidateError() throws Exception {
+      packageDTO.setName("");
+      when(packageService.validate(any(PackageDTO.class))).thenReturn(List.of("userName is required"));
+      mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/package/create")
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .content(objectMapper.writeValueAsString(packageDTO)))
+              .andExpect(status().isBadRequest())
+              .andExpect(jsonPath("$.data").isArray());
 
     }
 
