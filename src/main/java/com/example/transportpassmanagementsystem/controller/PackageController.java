@@ -5,7 +5,6 @@ import com.example.transportpassmanagementsystem.dto.PackageInputRecordsDTO;
 import com.example.transportpassmanagementsystem.dto.PackageRecordsDTO;
 import com.example.transportpassmanagementsystem.dto.ResponseDTO;
 import com.example.transportpassmanagementsystem.service.PackageService;
-import com.example.transportpassmanagementsystem.util.FieldValidation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
