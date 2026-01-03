@@ -15,8 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PackageDTO {
-    @Pattern(regexp = "^[A-Za-z]{0,30}",message = "Name  must be 30 characters only")
-    @Size(max = 30,message = "packageName  should must be 30 characters only")
+    @Pattern(regexp = "^[A-Za-z]{0,30}",message = "Name  must be 30 characters Alphabets only")
+    @Size(max = 30,message = "packageName  should must be 30 characters Alphabets only")
     private  String name;
     @Pattern(regexp = "^[A-Za-z]{0,20}",message = "transportMode must be 20 characters only")
     @Size(max = 20,message = "transportMode must be 20 characters only")
