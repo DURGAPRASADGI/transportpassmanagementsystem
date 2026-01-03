@@ -1,5 +1,6 @@
 package com.example.transportpassmanagementsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "MCAVV25_Member_Type")
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Mcavv25MemberType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

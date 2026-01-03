@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface MCAVV25MemberTypeRepository extends JpaRepository<Mcavv25MemberType, Integer> {
 
     @Query("""
-            select mmt.memberTypeName from Mcavv25MemberType mmt  where mmt.memberTypeName ILIKE concat(%,:memberTye,%)
+            select mmt.memberTypeName from Mcavv25MemberType mmt  where mmt.memberTypeName ILIKE concat('%', :memberType, '%')
             """)
     boolean getMemberTypes(String memberTye);
 
